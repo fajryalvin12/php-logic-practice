@@ -23,7 +23,8 @@
                 [ "name" => "Pen", "price" => 100 ]            
             ]
         ],
-    ]
+    ];
+
 ?>
 
 <!DOCTYPE html>
