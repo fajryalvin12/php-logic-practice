@@ -61,16 +61,25 @@
         return $message;
     }
 
-    // tambahan fitur v2.0
-    // 1. validasi total amount atau jumlah belanjaan tidak boleh lebih dari $100 
-    // solved => function validateAmount(), digunakan di line 74
-    // 2. validasi price per item tidak boleh 0 atau kurang
-    // solved => line 68-73
-    // 3. check nama barang, jika namanya adalah invalid maka akan ada message penolakan
-    // solved => line 74-76
-    // tambahan fitur v3.0
-    // memberikan validasi jumlah item "pen" yang dibeli oleh tiap customer agar tidak lebih dari 5 
-    // solved => line 101-105, tambahan variabel $penCount untuk menampung setiap item pen dari iterasi array items
+    function validatePenLimit ($arr) {
+        $message = "";
+        $count = 0;
+
+        foreach ($arr as $item) {
+            if ($item["name"] === "Pen") {
+                $count++;
+            }
+        }
+
+        if ($count > 5) {
+            $message = "Cannot buy Pen more than 5";
+        }
+
+        return $message;
+    }
+
+    // tambahan fitur v4.0
+    // refactor logic business jadi function supaya reusable 
 ?>
 
 <!DOCTYPE html>
@@ -98,18 +107,16 @@
                  ?>
                     <li>
                         <?= $details["name"] ?> - <?= $details["price"] ?>
-                        <?php if ($details["name"] === "Pen") : $penCount++ ?>
-                            <?php if ($penCount > 5) : ?>
-                                <p class="alert">Cannot buy Pen more than 5</p>
-                            <?php endif ?>
-                        <?php endif ?>
-                        <p class="alert"><?= checkItemPrice($details["price"]) ?></p>
-                        <p class="alert"><?= checkInvalid($details["name"]) ?></p>
                     </li>
+                    <p class="alert"><?= checkItemPrice($details["price"]) ?></p>
+                    <p class="alert"><?= checkInvalid($details["name"]) ?></p>
             <?php endforeach ?>
         <p>Total : <?= "$" . number_format($totalAmount, 0, '.', ',') ?></p>
         <p class="alert"><?= validateAmount($totalAmount) ?></p>
+        <p class="alert"><?= validatePenLimit($order["items"]) ?></p>
         </ul>
     <?php endforeach ?>
 </body>
 </html>
+
+
