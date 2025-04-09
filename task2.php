@@ -5,7 +5,13 @@
             "items" => [
                 [ "name" => "laptop", "price" => 30 ],
                 [ "name" => "mouse", "price" => 5 ],
-                [ "name" => "keyboard", "price" => 3 ]    
+                [ "name" => "keyboard", "price" => 3 ],
+                [ "name" => "Pen", "price" => 5 ],
+                [ "name" => "Pen", "price" => 5 ],
+                [ "name" => "Pen", "price" => 5 ],
+                [ "name" => "Pen", "price" => 5 ],
+                [ "name" => "Pen", "price" => 5 ],
+                [ "name" => "Pen", "price" => 5 ],
             ]
         ],
         [
@@ -19,7 +25,7 @@
         [
             "customer" => "John",
             "items" => [
-                [ "name" => "Invalid", "price" => 5 ],
+                [ "name" => "Book", "price" => 5 ],
                 [ "name" => "Pen", "price" => 5 ]            
             ]
         ],
@@ -35,6 +41,26 @@
         return $message;
     }
 
+    function checkItemPrice ($price) {
+        $message = "";
+
+        if ($price <= 0) {
+            $message = "Each item price must be greater than 0";
+        }
+
+        return $message;
+    }
+
+    function checkInvalid ($itemName) {
+        $message = "";
+
+        if ($itemName === "Invalid"){
+            $message = "prohibited to order invalid items";
+        }
+
+        return $message;
+    }
+
     // tambahan fitur v2.0
     // 1. validasi total amount atau jumlah belanjaan tidak boleh lebih dari $100 
     // solved => function validateAmount(), digunakan di line 74
@@ -42,6 +68,9 @@
     // solved => line 68-73
     // 3. check nama barang, jika namanya adalah invalid maka akan ada message penolakan
     // solved => line 74-76
+    // tambahan fitur v3.0
+    // memberikan validasi jumlah item "pen" yang dibeli oleh tiap customer agar tidak lebih dari 5 
+    // solved => line 101-105, tambahan variabel $penCount untuk menampung setiap item pen dari iterasi array items
 ?>
 
 <!DOCTYPE html>
@@ -57,23 +86,25 @@
     </style>
 </head>
 <body>
-    <h2>Soal Pertama</h2>
+    <h2>Soal Kedua</h2>
 
-    <?php foreach ($orders as $order ) : ?>
+    <?php foreach ($orders as $order ) : $penCount = 0; ?>
         <p>Customer Name : <?= $order["customer"] ?></p>
         <ul>
             <?php
                 $totalAmount = 0; 
                 foreach ($order['items'] as $details) :
-                $totalAmount += $details['price'] ?>
+                $totalAmount += $details['price'];
+                 ?>
                     <li>
                         <?= $details["name"] ?> - <?= $details["price"] ?>
-                        <?php if ($details["price"] <= 0) : ?> 
-                            <p class="alert">Each item price must be greater than 0</p>
+                        <?php if ($details["name"] === "Pen") : $penCount++ ?>
+                            <?php if ($penCount > 5) : ?>
+                                <p class="alert">Cannot buy Pen more than 5</p>
+                            <?php endif ?>
                         <?php endif ?>
-                        <?php if ($details["name"] === "Invalid") : ?> 
-                            <p class="alert">Order process was invalid</p>
-                        <?php endif ?>
+                        <p class="alert"><?= checkItemPrice($details["price"]) ?></p>
+                        <p class="alert"><?= checkInvalid($details["name"]) ?></p>
                     </li>
             <?php endforeach ?>
         <p>Total : <?= "$" . number_format($totalAmount, 0, '.', ',') ?></p>
