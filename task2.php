@@ -7,11 +7,7 @@
                 [ "name" => "mouse", "price" => 5 ],
                 [ "name" => "keyboard", "price" => 3 ],
                 [ "name" => "Pen", "price" => 5 ],
-                [ "name" => "Pen", "price" => 5 ],
-                [ "name" => "Pen", "price" => 5 ],
-                [ "name" => "Pen", "price" => 5 ],
-                [ "name" => "Pen", "price" => 5 ],
-                [ "name" => "Pen", "price" => 5 ],
+                [ "name" => "Pen", "price" => 5 ]
             ]
         ],
         [
@@ -19,48 +15,52 @@
             "items" => [
                 [ "name" => "PC", "price" => 35 ],
                 [ "name" => "mouse", "price" => 5 ],
-                [ "name" => "headset", "price" => 2 ]    
+                [ "name" => "headset", "price" => 2 ],
+                [ "name" => "Pen", "price" => 5 ],
+                [ "name" => "Pen", "price" => 5 ],
             ]
         ],
         [
             "customer" => "John",
             "items" => [
-                [ "name" => "Book", "price" => 5 ],
-                [ "name" => "Pen", "price" => 5 ]            
+                [ "name" => "Book", "price" => 0 ],
+                [ "name" => "Pen", "price" => 5 ],
+                [ "name" => "Pen", "price" => 5 ],
             ]
         ],
     ];
 
     function validateAmount ($totalAmount) {
         $message = "";
-
+        
         if ($totalAmount > 100) {
             $message = "Cannot purchase the items exceed $100";
         }
 
         return $message;
     }
-
-    function checkItemPrice ($price) {
+    function checkItemPrice ($items) {
         $message = "";
 
-        if ($price <= 0) {
-            $message = "Each item price must be greater than 0";
+        foreach ($items as $item) {
+            if ($item["price"] <= 0) {
+                $message = "Price for item '{$item["name"]}' must be greater than 0";
+            }
         }
 
         return $message;
     }
-
-    function checkInvalid ($itemName) {
+    function checkInvalid ($items) {
         $message = "";
 
-        if ($itemName === "Invalid"){
-            $message = "prohibited to order invalid items";
+        foreach ($items as $item) {
+            if ($item["name"] === "invalid"){
+                $message = "prohibited to order invalid items";
+            }
         }
 
         return $message;
     }
-
     function validatePenLimit ($arr) {
         $message = "";
         $count = 0;
@@ -68,6 +68,25 @@
         foreach ($arr as $item) {
             if ($item["name"] === "Pen") {
                 $count++;
+            }
+        }
+
+        if ($count > 5) {
+            $message = "Cannot buy Pen more than 5";
+        }
+
+        return $message;
+    }
+    function validatePenAll ($array) {
+        $message = "";
+        $count = 0;
+
+        foreach($array as $arr) {
+            $result = $arr["items"];
+            foreach($result as $subArr) {
+                if ($subArr["name"] === "Pen") {
+                $count++;
+                }
             }
         }
 
@@ -98,7 +117,7 @@
     <h2>Soal Kedua</h2>
 
     <?php foreach ($orders as $order ) : $penCount = 0; ?>
-        <p>Customer Name : <?= $order["customer"] ?></p>
+        <p><strong>Customer Name :</strong> <?= $order["customer"] ?></p>
         <ul>
             <?php
                 $totalAmount = 0; 
@@ -108,14 +127,16 @@
                     <li>
                         <?= $details["name"] ?> - <?= $details["price"] ?>
                     </li>
-                    <p class="alert"><?= checkItemPrice($details["price"]) ?></p>
-                    <p class="alert"><?= checkInvalid($details["name"]) ?></p>
             <?php endforeach ?>
-        <p>Total : <?= "$" . number_format($totalAmount, 0, '.', ',') ?></p>
-        <p class="alert"><?= validateAmount($totalAmount) ?></p>
-        <p class="alert"><?= validatePenLimit($order["items"]) ?></p>
+            <p>Total : <?= "$" . number_format($totalAmount, 0, '.', ',') ?></p>
+            <p class="alert"><?= validateAmount($totalAmount) ?></p>
         </ul>
     <?php endforeach ?>
+    
+    <p class="alert"><?= validatePenAll($orders)?></p>
+    <p class="alert"><?= checkItemPrice($order["items"]) ?></p>
+    <p class="alert"><?= checkInvalid($order["items"]) ?></p>
+    <p class="alert"><?= validatePenLimit($order["items"]) ?></p>
 </body>
 </html>
 
